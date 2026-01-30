@@ -224,8 +224,9 @@ a{ color: inherit; text-decoration: none; }
   fill: var(--text);
 }
 
+/* Nav Toggle (Hamburger) Base */
 .nav-toggle{
-  display:none;
+  display:none; /* Hidden on desktop */
   width: 44px;
   height: 44px;
   border-radius: 14px;
@@ -233,13 +234,19 @@ a{ color: inherit; text-decoration: none; }
   background: #fff;
   cursor: pointer;
   box-shadow: 0 10px 26px rgba(15,23,42,0.08);
+  align-items: center;
+  justify-content: center;
+  z-index: 60;
+  padding: 0;
 }
 .nav-toggle-lines{
   width: 18px;
-  height: 12px;
+  height: 2px;
+  background: var(--text);
+  border-radius: 999px;
   display:block;
   position: relative;
-  margin: 0 auto;
+  transition: all 0.3s ease;
 }
 .nav-toggle-lines::before,
 .nav-toggle-lines::after{
@@ -250,9 +257,10 @@ a{ color: inherit; text-decoration: none; }
   height:2px;
   background: var(--text);
   border-radius: 999px;
+  transition: all 0.3s ease;
 }
-.nav-toggle-lines::before{ top: 2px; }
-.nav-toggle-lines::after{ bottom: 2px; }
+.nav-toggle-lines::before{ top: -6px; }
+.nav-toggle-lines::after{ top: 6px; }
 
 /* Hero */
 .hero{
@@ -972,7 +980,10 @@ a{ color: inherit; text-decoration: none; }
   transform: translateY(0);
 }
 
-/* Responsive */
+/* ========================================= */
+/* RESPONSIVE & MOBILE MENU LOGIC            */
+/* ========================================= */
+
 @media (max-width: 980px){
   .hero-inner{ grid-template-columns: 1fr; text-align: center; }
   .hero-lead{ margin-left: auto; margin-right: auto; }
@@ -988,27 +999,63 @@ a{ color: inherit; text-decoration: none; }
   
   .foot-links{ justify-content: center; }
 }
+
 @media (max-width: 760px){
+  /* Show the toggle button */
+  .nav-toggle{
+    display:flex;
+  }
+
+  /* Hide the panel by default, style it as a dropdown */
   .nav-panel{
-    position: absolute;
-    right: 0;
-    top: 70px;
-    width: min(300px, calc(100vw - 30px));
-    border-radius: 12px;
-    padding: 16px;
-    background: #fff;
-    border: 1px solid var(--line);
-    box-shadow: var(--shadow);
-    display:none;
+    display:none; /* Hidden */
     flex-direction: column;
     align-items: stretch;
     gap: 8px;
+    
+    position: absolute;
+    right: 0;
+    top: 100%; /* Directly below header */
+    margin-top: 10px;
+    width: min(300px, calc(100vw - 32px));
+    
+    background: #fff;
+    border: 1px solid var(--line);
+    padding: 16px;
+    border-radius: 12px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+    z-index: 100;
   }
-  .nav-panel.open{ display:flex; }
-  .nav-toggle{ display:inline-flex; }
   
+  /* When 'open' class is added via JS */
+  .nav-panel.open{
+    display:flex;
+    animation: slideDown 0.2s ease-out forwards;
+  }
+
+  /* Stack styling */
   .cards{ grid-template-columns: 1fr; }
   .gallery{ grid-template-columns: 1fr; }
-  
   .to-top { bottom: 16px; right: 16px; }
+
+  /* Hamburger Animation Logic 
+     Check if aria-expanded="true" on the button 
+  */
+  .nav-toggle[aria-expanded="true"] .nav-toggle-lines {
+    background: transparent; /* Hide middle line */
+  }
+  .nav-toggle[aria-expanded="true"] .nav-toggle-lines::before {
+    top: 0;
+    transform: rotate(45deg);
+  }
+  .nav-toggle[aria-expanded="true"] .nav-toggle-lines::after {
+    top: 0;
+    transform: rotate(-45deg);
+  }
+}
+
+/* Simple keyframe for menu entrance */
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
 }
